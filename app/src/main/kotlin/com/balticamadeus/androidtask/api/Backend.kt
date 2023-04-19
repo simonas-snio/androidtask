@@ -19,7 +19,7 @@ class Backend @Inject constructor(
             api.getPosts()
         } catch (e: Exception) {
             e.printStackTrace()
-            return Resource.Error( "An unknown error")
+            return Resource.Error("An unknown error")
         }
         return Resource.Success(response)
     }
