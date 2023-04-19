@@ -1,5 +1,12 @@
 package com.balticamadeus.androidtask.api.model
 
-data class Posts(
-    val posts: List<Post>
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+
+@JsonClass(generateAdapter = true)
+data class Post(
+    @Json(name = "title")
+    val title: String,
+    @Json(name = "userId")
+    val userId: Int
 )
