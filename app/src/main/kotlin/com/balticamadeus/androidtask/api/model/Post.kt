@@ -11,6 +11,8 @@ data class Post(
     @Json(name = "title")
     val title: String,
     @Json(name = "userId")
+    val userId: Int,
+    @Json(name = "id")
     @PrimaryKey
-    val userId: Int
+    val id: Int
 )
