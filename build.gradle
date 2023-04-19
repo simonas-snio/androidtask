@@ -15,7 +15,6 @@ buildscript {
         lifecycle_version = '2.6.1'
         room_version = '2.5.1'
 
-
         dependencies {
             classpath "com.google.dagger:hilt-android-gradle-plugin:$dagger_hilt_version"
         }
