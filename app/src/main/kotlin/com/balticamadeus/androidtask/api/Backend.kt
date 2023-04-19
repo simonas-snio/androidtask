@@ -19,7 +19,7 @@ class Backend @Inject constructor(
             api.getPosts()
         } catch (e: Exception) {
             e.printStackTrace()
-            return Resource.Error(e.message ?: "Error")
+            return Resource.Error( "An unknown error")
         }
         return Resource.Success(response)
     }
@@ -29,25 +29,21 @@ class Backend @Inject constructor(
             api.getUser(id)
         } catch (e: Exception) {
             e.printStackTrace()
-            return Resource.Error(e.message ?: "Error")
+            return Resource.Error("An unknown error")
         }
         return Resource.Success(response)
     }
 
 
-
     companion object {
         fun createBackend(): BackendInterface {
             val client = OkHttpClient.Builder()
-
             client.addInterceptor {
                 val request = it.request()
                 val builder = request.newBuilder()
                 val url = request.url.newBuilder()
-
                 it.proceed(builder.url(url.build()).build())
             }
-
             return getRetrofit(client)
         }
 
@@ -56,15 +52,10 @@ class Backend @Inject constructor(
                 .client(client.addInterceptor(HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
                 }).build())
-                .addConverterFactory(
-                    MoshiConverterFactory.create(
-                        Moshi.Builder().build()
-                    )
-                )
+                .addConverterFactory(MoshiConverterFactory.create(Moshi.Builder().build()))
                 .baseUrl(BuildConfig.API_URL)
                 .build()
                 .create(BackendInterface::class.java)
         }
-
     }
 }
