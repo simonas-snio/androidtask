@@ -15,9 +15,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AndroidTaskTheme {
-                // A surface container using the 'background' color from the theme
-                    Greeting("Android")
-                }
+                Greeting("Android")
+            }
         }
     }
 }

@@ -13,6 +13,7 @@ import javax.inject.Inject
 class Backend @Inject constructor(
     private val api: BackendInterface
 ) {
+
     suspend fun getPosts(): Resource<List<Post>> {
         val response = try {
             api.getPosts()
@@ -32,6 +33,8 @@ class Backend @Inject constructor(
         }
         return Resource.Success(response)
     }
+
+
 
     companion object {
         fun createBackend(): BackendInterface {
