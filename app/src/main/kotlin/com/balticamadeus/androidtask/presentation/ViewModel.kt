@@ -81,7 +81,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    private fun resetError() {
+    fun resetError() {
         error.value = ""
     }
 }

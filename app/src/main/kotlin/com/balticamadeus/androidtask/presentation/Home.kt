@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.pullrefresh.PullRefreshDefaults
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -42,13 +41,21 @@ fun Home(viewModel: MainViewModel = hiltViewModel()) {
         }
     )
 
+    if (error.isNotEmpty()) {
+        ErrorDialog(
+            error = error,
+            retry = { viewModel.getPosts() },
+            cancel = { viewModel.resetError() }
+        )
+    }
+
     Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
         if (posts.isEmpty()) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
-            ) {}//When LazyColumn has no children, it does not fill max size, and is not scrollable hence pull refresh does not work, so a little work-around to counter that.
+            ){}//When LazyColumn has no children, it does not fill max size, and is not scrollable hence pull refresh does not work, so a little work-around to counter that.
         } else {
             LazyColumn {
                 items(posts) {
@@ -95,28 +102,4 @@ fun ErrorDialog(error: String, retry: () -> Unit, cancel: () -> Unit) {
             }
         }
     )
-}
-
-@Composable
-fun Loader(
-    isLoading: Boolean,
-    error: String = "",
-    retry: () -> Unit = {},
-    cancel: () -> Unit = {}
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        if (isLoading) {
-            CircularProgressIndicator(color = MaterialTheme.colors.primary)
-        }
-        if (error.isNotEmpty()) {
-            ErrorDialog(
-                error = error,
-                retry = { retry() },
-                cancel = { cancel() }
-            )
-        }
-    }
 }
