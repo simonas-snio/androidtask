@@ -14,7 +14,7 @@ import com.balticamadeus.androidtask.db.dao.UserDao
         Post::class,
         User::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class DB : RoomDatabase() {
