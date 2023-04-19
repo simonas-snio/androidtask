@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">AndroidTask</string>
+    <string name="button_retry">Retry</string>
+    <string name="button_cancel">Cancel</string>
 </resources>
