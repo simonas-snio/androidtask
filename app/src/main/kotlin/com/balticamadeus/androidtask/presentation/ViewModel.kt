@@ -26,16 +26,19 @@ class MainViewModel @Inject constructor(
     val posts = db.postDao().getPostsWithUser()
     val error = mutableStateOf("")
     val isRefreshing = mutableStateOf(false)
+    val loading = mutableStateOf(false)
 
     init {
         getPosts()
     }
 
-    fun getPosts(pull: Boolean = false) {
+    fun getPosts(pullRefresh: Boolean = false) {
         val userIds = mutableListOf<Int>() //flag to avoid fetching duplicate values
         resetError()
-        if (pull) {
+        if (pullRefresh) {
             isRefreshing.value = true
+        } else {
+            loading.value = true
         }
         viewModelScope.launch(Dispatchers.IO) {
             when (val result = api.getPosts()) {
@@ -52,12 +55,15 @@ class MainViewModel @Inject constructor(
                     withContext(Dispatchers.Main) {
                         error.value = ""
                         isRefreshing.value = false
+                        loading.value = false
+
                     }
                 }
                 is Resource.Error -> {
                     withContext(Dispatchers.Main) {
                         error.value = result.message ?: "Error"
                         isRefreshing.value = false
+                        loading.value = false
                     }
                 }
             }

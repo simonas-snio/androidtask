@@ -32,12 +32,13 @@ fun Home(viewModel: MainViewModel = hiltViewModel()) {
     val posts by viewModel.posts.collectAsState(initial = emptyList())
     val isRefreshing by remember { viewModel.isRefreshing }
     val error by remember { viewModel.error }
+    val loading by remember { viewModel.loading }
 
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
         refreshingOffset = PullRefreshDefaults.RefreshingOffset + 24.dp,
         onRefresh = {
-            viewModel.getPosts(pull = true)
+            viewModel.getPosts(pullRefresh = true)
         }
     )
 
@@ -49,27 +50,32 @@ fun Home(viewModel: MainViewModel = hiltViewModel()) {
         )
     }
 
-    Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
-        if (posts.isEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ){}//When LazyColumn has no children, it does not fill max size, and is not scrollable hence pull refresh does not work, so a little work-around to counter that.
-        } else {
-            LazyColumn {
-                items(posts) {
-                    ListItem(it.postTitle, it.userName)
-                    Divider(color = Color.Black)
+    if (loading && !isRefreshing) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+            if (posts.isEmpty()) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                ) {}//When LazyColumn has no children, it does not fill max size, and is not scrollable hence pull refresh does not work, so a little work-around to counter that.
+            } else {
+                LazyColumn {
+                    items(posts) {
+                        ListItem(it.postTitle, it.userName)
+                        Divider(color = Color.Black)
+                    }
                 }
             }
+            PullRefreshIndicator(
+                isRefreshing,
+                pullRefreshState,
+                Modifier.align(Alignment.TopCenter)
+            )
         }
-
-        PullRefreshIndicator(
-            isRefreshing,
-            pullRefreshState,
-            Modifier.align(Alignment.TopCenter)
-        )
     }
 }
 
@@ -91,7 +97,7 @@ fun ErrorDialog(error: String, retry: () -> Unit, cancel: () -> Unit) {
         title = { Text(text = error) },
         confirmButton = {
             Button(onClick = {
-                retry();
+                retry()
             }) {
                 Text(stringResource(id = R.string.button_retry))
             }
