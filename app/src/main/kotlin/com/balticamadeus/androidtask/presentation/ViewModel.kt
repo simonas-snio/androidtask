@@ -29,7 +29,6 @@ class MainViewModel @Inject constructor(
     }
 
     fun getPosts(pullRefresh: Boolean = false) {
-        val userIds = mutableListOf<Int>() //flag to avoid fetching duplicate values
         resetError()
         if (pullRefresh) {
             isRefreshing.value = true
@@ -42,10 +41,11 @@ class MainViewModel @Inject constructor(
                     result.data?.let {
                         it.forEach { post ->
                             db.postDao().upsertPost(post)
-                            if (!userIds.contains(post.userId)) {
-                                getUser(post.userId)
-                                userIds.add(post.userId)
-                            }
+                        }
+                        it.distinctBy { post ->
+                            post.userId
+                        }.onEach { distinctUser ->
+                            getUser(distinctUser.userId)
                         }
                     }
                     withContext(Dispatchers.Main) {
